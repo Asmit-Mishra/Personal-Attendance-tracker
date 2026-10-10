@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Monitiring System | Early Warning System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Aadi-Shakti Tactical UI Effects */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        .cyber-border {
+            position: relative;
+        }
+        .cyber-border::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+        .animate-slide-up {
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-[#020617] text-slate-200 h-screen w-screen overflow-hidden font-sans antialiased selection:bg-sky-500/30">
+
+    <!-- Ambient Background Gradients -->
+    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-sky-600/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[0%] right-[0%] w-[40%] h-[50%] bg-emerald-600/10 rounded-full blur-[120px]"></div>
+    </div>
+
+    <!-- ==========================================
+         VIEW 1: LANDING PAGE 
+         ========================================== -->
+    <div id="landing-view" class="relative z-10 flex flex-col h-full animate-slide-up">
+        <header class="w-full p-6 flex justify-between items-center">
+            <div class="font-bold text-xl tracking-widest text-slate-300">
+                ACMR<span class="text-sky-500">.</span>
+            </div>
+            <button onclick="showAuth('admin')" class="text-xs font-mono tracking-widest text-slate-500 hover:text-purple-400 transition-colors uppercase">
+                Admin Access
+            </button>
+        </header>
+
+        <div class="flex-1 flex flex-col items-center justify-center px-4">
+            <div class="inline-block py-1 px-3 rounded-full border border-sky-500/20 bg-sky-500/10 text-sky-400 text-xs font-mono tracking-widest mb-6 shadow-[0_0_15px_rgba(56,189,248,0.2)]">
+               SECTION C
+            </div>
+            <h1 class="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-slate-500 text-center mb-6">
+                Academic Student<br>Monitering System
+            </h1>
+            <p class="text-slate-400 max-w-lg text-center mb-12">
+                Predictive analytics for student success. Monitor attendance, track grade trajectories, and identify at-risk patterns before they become critical.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+                <button onclick="showAuth('student')" class="flex-1 py-4 rounded-xl bg-slate-800/50 border border-slate-700 hover:border-sky-500 hover:bg-sky-900/20 transition-all group">
+                    <span class="block text-sky-400 font-bold mb-1">Student Portal</span>
+                    <span class="text-xs text-slate-500">View your matrix</span>
+                </button>
+                <button onclick="showAuth('teacher')" class="flex-1 py-4 rounded-xl bg-slate-800/50 border border-slate-700 hover:border-emerald-500 hover:bg-emerald-900/20 transition-all group">
+                    <span class="block text-emerald-400 font-bold mb-1">Faculty Portal</span>
+                    <span class="text-xs text-slate-500">Manage records</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW 2: AUTHENTICATION
+         ========================================== -->
+    <div id="auth-view" class="hidden relative z-10 flex flex-col items-center justify-center h-full">
+        <div class="glass-panel cyber-border rounded-2xl p-8 w-full max-w-md mx-4 relative">
+            <button onclick="switchView('landing-view')" class="absolute top-4 left-4 text-slate-500 hover:text-slate-300 text-sm">← Back</button>
+            
+            <div class="text-center mt-6 mb-8">
+                <h2 id="auth-title" class="text-2xl font-bold text-white mb-2">Sign In</h2>
+                <p id="auth-subtitle" class="text-xs text-slate-400 uppercase tracking-widest">Enter your credentials</p>
+                <p id="auth-hint" class="text-[10px] text-emerald-500/70 mt-2 hidden font-mono">Hint: Use your Name only (e.g., Zareena). Passkey is exactly the same.</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">ID Name / Number</label>
+                    <input type="text" id="login-id" required autocomplete="off" class="w-full font-mono bg-slate-900/80 border border-slate-700 text-sky-400 px-4 py-3 rounded-lg focus:outline-none focus:border-sky-500 transition-colors">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Passkey</label>
+                    <input type="password" id="login-pass" required autocomplete="off" class="w-full bg-slate-900/80 border border-slate-700 text-slate-200 px-4 py-3 rounded-lg focus:outline-none focus:border-sky-500 transition-colors">
+                </div>
+                <button type="submit" id="auth-btn" class="w-full py-3.5 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition-colors mt-4 shadow-[0_0_15px_rgba(56,189,248,0.4)]">
+                    INITIALIZE SECURE UPLINK
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW 3: STUDENT DASHBOARD
+         ========================================== -->
+    <div id="student-view" class="hidden relative z-10 h-full flex flex-col">
+        <header class="w-full p-4 border-b border-slate-800 flex justify-between items-center glass-panel">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-sky-500/20 border border-sky-500/50 flex items-center justify-center text-sky-400 font-bold">CN</div>
+                <div>
+                    <h2 class="text-lg font-bold text-slate-100">Chetan Nema</h2>
+                    <p class="text-xs text-sky-400 font-mono tracking-widest">ID: 26BPH010</p>
+                </div>
+            </div>
+            <button onclick="switchView('landing-view')" class="text-xs font-mono tracking-widest px-4 py-2 border border-slate-700 hover:bg-slate-800 text-slate-400 hover:text-white rounded transition-colors">DISCONNECT</button>
+        </header>
+
+        <div class="p-6 grid grid-cols-1 lg:grid-cols-4 gap-6 flex-1 overflow-y-auto">
+            <!-- Left Column: Global AI Risk Analysis -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="glass-panel p-6 rounded-xl relative overflow-hidden">
+                    <h3 class="text-xs text-slate-400 uppercase tracking-widest mb-6 font-bold">Attendence Assessment</h3>
+                    
+                    <div class="flex flex-col items-center text-center">
+                        <div id="global-risk-badge" class="transition-all duration-500"></div>
+                        <p id="global-risk-text"></p>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-6 rounded-xl cyber-border">
+                    <h3 class="text-xs text-slate-400 uppercase tracking-widest mb-2 font-bold">Aggregate Attendance</h3>
+                    <p class="text-5xl font-light text-slate-100 font-mono" id="overall-att">--<span class="text-xl text-slate-500">%</span></p>
+                </div>
+            </div>
+
+            <!-- Right Column: The 6 Subjects Grid -->
+            <div class="lg:col-span-3 glass-panel rounded-xl p-6 flex flex-col">
+                <div class="flex justify-between items-end border-b border-slate-800 pb-4 mb-6">
+                    <h3 class="text-sm font-bold text-slate-300 uppercase tracking-widest">Module Telemetry</h3>
+                    <p class="text-xs text-slate-500 font-mono">Select a module for detailed report</p>
+                </div>
+                
+                <div id="subjects-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto pr-2 pb-2">
+                    <!-- Subject cards injected by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBJECT REPORT MODAL -->
+    <div id="subject-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="glass-panel cyber-border w-full max-w-2xl rounded-xl overflow-hidden transform scale-95 transition-transform duration-300" id="modal-content">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                <div>
+                    <h2 id="modal-title" class="text-2xl font-bold text-white mb-1">Subject Name</h2>
+                    <p id="modal-prof" class="text-xs text-sky-400 font-mono uppercase tracking-widest">Professor Name</p>
+                </div>
+                <button onclick="closeModal()" class="text-slate-500 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <div class="p-6 grid grid-cols-2 gap-6">
+                <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-800">
+                    <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Attendance Record</p>
+                    <p id="modal-att" class="text-3xl font-mono text-sky-400 font-light mb-2">--%</p>
+                    <p id="modal-att-desc" class="text-xs text-slate-500">Status normal.</p>
+                </div>
+                <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-800">
+                    <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Current Grade</p>
+                    <p id="modal-grade" class="text-3xl font-mono text-emerald-400 font-light mb-2">--%</p>
+                    <p class="text-xs text-slate-500">Based on mid-semester evaluation.</p>
+                </div>
+                <div class="col-span-2 bg-slate-900/50 p-4 rounded-lg border border-slate-800">
+                    <p class="text-xs text-slate-400 uppercase tracking-widest mb-2">AI Struggle Prediction</p>
+                    <div id="modal-prediction"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==========================================
+         VIEW 4: TEACHER DASHBOARD (Tactical UI)
+         ========================================== -->
+    <div id="teacher-view" class="hidden relative z-10 h-full flex flex-col">
+        <header class="w-full p-4 border-b border-slate-800 flex justify-between items-center glass-panel border-b-emerald-500/30">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center text-emerald-400 font-bold">F</div>
+                <div>
+                    <h2 id="teacher-name-display" class="text-lg font-bold text-slate-100">Prof. Name</h2>
+                    <p id="teacher-subject-display" class="text-xs text-emerald-400 font-mono tracking-widest">Subject Authorized</p>
+                </div>
+            </div>
+            <button onclick="switchView('landing-view')" class="text-xs font-mono tracking-widest px-4 py-2 border border-slate-700 hover:bg-slate-800 text-slate-400 hover:text-white rounded transition-colors">DISCONNECT</button>
+        </header>
+
+        <div class="p-6 flex-1 flex flex-col gap-6 overflow-hidden">
+            <!-- Roster Controls -->
+            <div class="flex justify-between items-end glass-panel p-6 rounded-xl border border-slate-700/50">
+                <div class="flex gap-6">
+                    <div>
+                        <label class="block text-xs text-slate-400 uppercase tracking-widest mb-2">Active Section</label>
+                        <div class="bg-slate-900/80 border border-slate-700 rounded-lg px-4 py-2 text-sm text-emerald-400 font-mono">
+                            Section C
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 uppercase tracking-widest mb-2">Log Date</label>
+                        <input type="date" id="attendance-date" class="bg-slate-900/80 border border-slate-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-emerald-500 text-slate-300 font-mono">
+                    </div>
+                </div>
+                <button class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-lg text-sm font-bold tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all">
+                   Enter Tdays Log
+                </button>
+            </div>
+
+            <!-- Student Roster Grid -->
+            <div class="glass-panel rounded-xl flex-1 flex flex-col overflow-hidden border border-slate-700/50 relative">
+                <div class="absolute top-0 left-0 w-full h-1 bg-emerald-500/50"></div>
+                <div class="overflow-y-auto flex-1">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-900/80 sticky top-0 text-xs uppercase text-slate-400 tracking-widest z-10 shadow-md">
+                            <tr>
+                                <th class="px-6 py-4 font-semibold">Student Matrix</th>
+                                <th class="px-6 py-4 font-semibold text-center">Global Att.</th>
+                                <th class="px-6 py-4 font-semibold text-center">Module Grade</th>
+                                <th class="px-6 py-4 font-semibold text-center">Daily Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacher-roster-body" class="divide-y divide-slate-800/50">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         VIEW 5: ADMIN DASHBOARD (Placeholder)
+         ========================================== -->
+    <div id="admin-view" class="hidden relative z-10 h-full flex flex-col">
+        <header class="w-full p-4 border-b border-slate-800 flex justify-between items-center glass-panel border-b-purple-500/30">
+            <div>
+                <h2 class="text-xl font-bold text-slate-100">System Oversight</h2>
+                <p class="text-xs text-purple-400 font-mono tracking-widest">Administrator Access</p>
+            </div>
+            <button onclick="switchView('landing-view')" class="text-xs font-mono tracking-widest px-4 py-2 border border-slate-700 hover:bg-slate-800 text-slate-400 hover:text-white rounded transition-colors">DISCONNECT</button>
+        </header>
+        <div class="flex-1 flex items-center justify-center">
+            <p class="text-slate-500 font-mono">Admin interface loading...</p>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         APPLICATION LOGIC
+         ========================================== -->
+    <script>
+        // --- 1. MOCK DATABASES ---
+        
+        // Faculty Credentials & Assignments
+        const mockTeachers = {
+            "Zareena": { pass: "Zareena", subject: "Communication Skills" },
+            "Abhishek": { pass: "Abhishek", subject: "Engineering Physics" },
+            "R.K Vats": { pass: "R.K Vats", subject: "Maths" },
+            "Vishal": { pass: "Vishal", subject: "Ethics" },
+            "Shahina": { pass: "Shahina", subject: "Mechanical" },
+            "Priyanka": { pass: "Priyanka", subject: "Computer Science" }
+        };
+
+        // Consolidated Section C Roster (BPH & BME)
+        const mockSectionC = [
+            { id: "26BPH001", name: "AADISH NARU", att: 88, grade: 82 },
+            { id: "26BPH002", name: "AARIT RANJAN MAITY", att: 76, grade: 75 },
+            { id: "26BPH003", name: "AARNA CHAUHAN", att: 12, grade: 0 }, // DROPPED OUT (<33%)
+            { id: "26BPH010", name: "CHETAN NEMA", att: 81, grade: 79 },
+            { id: "26BPH018", name: "KUBENDRAN K", att: 25, grade: 10 }, // DROPPED OUT (<33%)
+            { id: "26BPH020", name: "MISHRA ASMIT SARVESH", att: 85, grade: 78 },
+            { id: "26BPH027", name: "PRIYANSH SHARMA", att: 90, grade: 85 },
+            { id: "26BPH041", name: "SHRESHTHA VASHISTHA", att: 94, grade: 91 },
+            { id: "26BPH050", name: "VORA SHUBH ROHIT", att: 5, grade: 0 }, // DROPPED OUT (<33%)
+            { id: "26BME091", name: "RIYA", att: 89, grade: 84 },
+            { id: "26BME100", name: "SHAMBHAVI SEN", att: 95, grade: 92 },
+            { id: "26BME105", name: "SHIVEN MOUDGIL", att: 18, grade: 5 }, // DROPPED OUT (<33%)
+            { id: "26BME116", name: "VANSHIKA", att: 82, grade: 76 },
+            { id: "26BME125", name: "YASHODHAN SHARMA", att: 80, grade: 74 }
+        ];
+
+        // Specific Student Data (For Student Login View)
+        const mockStudentData = {
+            name: "Chetan Nema",
+            id: "26BPH010",
+            subjects: [
+                { name: "Mechanical", prof: "Shahina", attendance: 85, grade: 78 },
+                { name: "Maths", prof: "R.K Vats", attendance: 92, grade: 88 },
+                { name: "Communication Skills", prof: "Zareena", attendance: 88, grade: 85 },
+                { name: "Ethics", prof: "Vishal", attendance: 95, grade: 90 },
+                { name: "Engineering Physics", prof: "Abhishek", attendance: 68, grade: 54 }, // Triggers standard risk (<75%)
+                { name: "Computer Science", prof: "Priyanka", attendance: 80, grade: 82 }
+            ]
+        };
+
+        // --- 2. STUDENT DASHBOARD LOGIC ---
+        function renderStudentDashboard() {
+            const data = mockStudentData;
+            
+            const totalAtt = Math.round(data.subjects.reduce((sum, sub) => sum + sub.attendance, 0) / data.subjects.length);
+            const isCritical = data.subjects.some(sub => sub.attendance < 75);
+
+            document.getElementById('overall-att').innerHTML = `${totalAtt}<span class="text-xl text-slate-500">%</span>`;
+            
+            const badge = document.getElementById('global-risk-badge');
+            const riskText = document.getElementById('global-risk-text');
+
+            if (isCritical) {
+                badge.className = "w-32 h-32 rounded-full border-4 border-rose-500/50 bg-rose-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(244,63,94,0.3)] mb-4 transition-all";
+                badge.innerHTML = '<span class="text-2xl font-black text-rose-400 tracking-widest">AT RISK</span>';
+                riskText.innerText = "WARNING: One or more modules have dropped below the 75% attendance threshold. Administrative flag activated.";
+                riskText.className = "text-sm mt-2 text-rose-300 px-4";
+            } else {
+                badge.className = "w-32 h-32 rounded-full border-4 border-emerald-500/50 bg-emerald-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.2)] mb-4 transition-all";
+                badge.innerHTML = '<span class="text-2xl font-black text-emerald-400 tracking-widest">SAFE</span>';
+                riskText.innerText = "All parameters nominal. Attendance requirements are currently met across all modules.";
+                riskText.className = "text-sm mt-2 text-slate-400 px-4";
+            }
+
+            const grid = document.getElementById('subjects-grid');
+            grid.innerHTML = ''; 
+
+            data.subjects.forEach((sub, index) => {
+                // Evaluate the <33% logic for the student's individual view
+                const isDropped = sub.attendance < 33;
+                let color = isDropped ? 'slate' : (sub.attendance < 75 ? 'rose' : (sub.attendance < 85 ? 'amber' : 'sky'));
+                const shadow = (sub.attendance < 75 && !isDropped) ? `shadow-[0_0_15px_rgba(244,63,94,0.2)]` : '';
+                const droppedTag = isDropped ? `<span class="px-2 py-0.5 ml-2 bg-slate-800 text-slate-400 text-[10px] font-bold tracking-widest rounded border border-slate-600">DROPPED</span>` : '';
+
+                const cardHTML = `
+                    <div onclick="openModal(${index})" class="cursor-pointer group relative glass-panel p-5 rounded-xl border border-slate-700/50 hover:border-${color}-500/50 hover:bg-slate-800/80 transition-all duration-300 ${shadow} ${isDropped ? 'opacity-50 grayscale' : ''}">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-${color}-500 opacity-80 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="pl-2">
+                            <h4 class="font-bold text-slate-200 text-lg mb-0 leading-tight">${sub.name} ${droppedTag}</h4>
+                            <p class="text-[10px] uppercase tracking-widest text-slate-500 font-mono mb-4">${sub.prof}</p>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-slate-400">Attendance</span>
+                                        <span class="font-mono text-${color}-400 font-bold">${sub.attendance}%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-900 rounded-full h-1.5 border border-slate-800">
+                                        <div class="bg-${color}-500 h-1.5 rounded-full" style="width: ${sub.attendance}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+
+        function openModal(subjectIndex) {
+            const sub = mockStudentData.subjects[subjectIndex];
+            
+            document.getElementById('modal-title').innerText = sub.name;
+            document.getElementById('modal-prof').innerText = sub.prof;
+            
+            const attEl = document.getElementById('modal-att');
+            const attDesc = document.getElementById('modal-att-desc');
+            const predBox = document.getElementById('modal-prediction');
+            
+            attEl.innerText = sub.attendance + '%';
+            document.getElementById('modal-grade').innerText = sub.grade + '%';
+
+            if (sub.attendance < 33) {
+                attEl.className = 'text-4xl font-mono text-slate-500 font-bold mb-2 line-through';
+                attDesc.innerHTML = '<span class="text-slate-500 font-bold tracking-widest">DROPPED OUT</span>';
+                predBox.className = 'text-sm p-3 rounded bg-slate-900/80 border-l-4 border-slate-600 text-slate-400';
+                predBox.innerHTML = `<strong>Status Terminated.</strong> The student's attendance has fallen below the critical 33% threshold. Course enrollment has been voided.`;
+            } else if (sub.attendance < 75) {
+                attEl.className = 'text-4xl font-mono text-rose-400 font-bold mb-2';
+                attDesc.innerHTML = '<span class="text-rose-500 font-bold">MANDATORY THRESHOLD FAILED</span>';
+                predBox.className = 'text-sm p-3 rounded bg-rose-950/30 border-l-4 border-rose-500 text-rose-200';
+                predBox.innerHTML = `<strong>Attendence is Lacking.</strong> The student has missed lectures. The current grade of ${sub.grade}% combined with <75% attendance triggers an automatic administrative warning. Faculty intervention required.`;
+            } else if (sub.attendance < 85) {
+                attEl.className = 'text-4xl font-mono text-amber-400 font-bold mb-2';
+                attDesc.innerHTML = '<span class="text-amber-500">Approaching threshold limits.</span>';
+                predBox.className = 'text-sm p-3 rounded bg-amber-950/30 border-l-4 border-amber-500 text-amber-200';
+                predBox.innerHTML = `<strong>Moderate Risk.</strong> Attendance is slipping. The student maintains a passing grade of ${sub.grade}%, but further absences may trigger a system flag. Recommend monitoring.`;
+            } else {
+                attEl.className = 'text-4xl font-mono text-sky-400 font-bold mb-2';
+                attDesc.innerHTML = '<span class="text-sky-500">Clearance optimal.</span>';
+                predBox.className = 'text-sm p-3 rounded bg-emerald-950/30 border-l-4 border-emerald-500 text-emerald-200';
+                predBox.innerHTML = `<strong>Low Risk.</strong> Student displays consistent engagement and a stable grade trajectory (${sub.grade}%). No immediate intervention required.`;
+            }
+
+            const modal = document.getElementById('subject-modal');
+            const content = document.getElementById('modal-content');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('subject-modal');
+            const content = document.getElementById('modal-content');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        // --- 3. TEACHER DASHBOARD LOGIC ---
+        function renderTeacherDashboard(teacherName, subjectName) {
+            document.getElementById('teacher-name-display').innerText = teacherName;
+            document.getElementById('teacher-subject-display').innerText = `Active Module: ${subjectName}`;
+            
+            document.getElementById('attendance-date').valueAsDate = new Date();
+
+            const rosterBody = document.getElementById('teacher-roster-body');
+            rosterBody.innerHTML = '';
+
+            mockSectionC.forEach(student => {
+                // DROPOUT LOGIC: Less than 33% attendance flags the student as dropped
+                const isDropped = student.att < 33;
+                
+                let riskColor = isDropped ? 'text-slate-600 font-bold line-through' : (student.att < 75 ? 'text-rose-400 font-bold' : (student.att < 85 ? 'text-amber-400' : 'text-emerald-400'));
+                let borderRisk = isDropped ? 'border-l-2 border-slate-800 bg-slate-900/50 opacity-60' : (student.att < 75 ? 'border-l-2 border-rose-500' : '');
+                let gradeInputState = isDropped ? 'disabled opacity-50 bg-slate-900 cursor-not-allowed' : 'bg-slate-900 focus:border-emerald-500';
+
+                // Render Action area: Either show standard P/A toggles, or a hard "DROPPED OUT" label
+                let actionArea = isDropped ? 
+                    `<span class="px-2 py-1 bg-rose-950/20 text-rose-500/50 text-[10px] font-bold tracking-widest rounded border border-rose-900/30">DROPPED OUT</span>` :
+                    `<div class="inline-flex rounded-lg border border-slate-700 p-1 bg-slate-900/50">
+                        <label class="relative flex items-center cursor-pointer">
+                            <input type="radio" name="status-${student.id}" value="present" checked class="peer sr-only">
+                            <span class="px-3 py-1 text-xs font-bold uppercase rounded peer-checked:bg-emerald-500/20 peer-checked:text-emerald-400 text-slate-500 transition-all">P</span>
+                        </label>
+                        <label class="relative flex items-center cursor-pointer">
+                            <input type="radio" name="status-${student.id}" value="absent" class="peer sr-only">
+                            <span class="px-3 py-1 text-xs font-bold uppercase rounded peer-checked:bg-rose-500/20 peer-checked:text-rose-400 text-slate-500 transition-all">A</span>
+                        </label>
+                    </div>`;
+
+                const row = `
+                    <tr class="hover:bg-slate-800/40 transition-colors ${borderRisk}">
+                        <td class="px-6 py-4">
+                            <p class="font-bold ${isDropped ? 'text-slate-500' : 'text-slate-200'}">${student.name}</p>
+                            <p class="text-xs font-mono text-slate-500">${student.id}</p>
+                        </td>
+                        <td class="px-6 py-4 text-center ${riskColor} font-mono">${student.att}%</td>
+                        <td class="px-6 py-4 text-center">
+                            <input type="number" value="${student.grade}" ${isDropped ? 'disabled' : ''} class="border border-slate-700 rounded px-3 py-1.5 w-20 text-sm focus:outline-none font-mono text-center text-slate-300 ${gradeInputState}">
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            ${actionArea}
+                        </td>
+                    </tr>
+                `;
+                rosterBody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        // --- 4. VIEW ROUTING & AUTH ---
+        let pendingRole = '';
+
+        function switchView(viewId) {
+            document.querySelectorAll('body > div[id$="-view"]').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('animate-slide-up');
+            });
+            const target = document.getElementById(viewId);
+            target.classList.remove('hidden');
+            setTimeout(() => target.classList.add('animate-slide-up'), 10);
+        }
+
+        function showAuth(role) {
+            pendingRole = role;
+            const title = document.getElementById('auth-title');
+            const btn = document.getElementById('auth-btn');
+            const hint = document.getElementById('auth-hint');
+            
+            document.getElementById('login-id').value = '';
+            document.getElementById('login-pass').value = '';
+            hint.classList.add('hidden');
+
+            if (role === 'student') {
+                title.innerText = 'Student Uplink';
+                title.className = 'text-2xl font-bold text-sky-400 mb-2 tracking-widest uppercase';
+                btn.className = 'w-full py-3.5 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition-colors mt-4 shadow-[0_0_15px_rgba(56,189,248,0.4)]';
+                document.getElementById('login-id').value = '26BPH010'; 
+                document.getElementById('login-pass').value = 'password';
+            } else if (role === 'teacher') {
+                title.innerText = 'Faculty Uplink';
+                title.className = 'text-2xl font-bold text-emerald-400 mb-2 tracking-widest uppercase';
+                btn.className = 'w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition-colors mt-4 shadow-[0_0_15px_rgba(16,185,129,0.4)]';
+                hint.classList.remove('hidden');
+            } else if (role === 'admin') {
+                title.innerText = 'Admin Uplink';
+                title.className = 'text-2xl font-bold text-purple-400 mb-2 tracking-widest uppercase';
+                btn.className = 'w-full py-3.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg transition-colors mt-4 shadow-[0_0_15px_rgba(168,85,247,0.4)]';
+            }
+            switchView('auth-view');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault(); 
+            const idInput = document.getElementById('login-id').value.trim();
+            const passInput = document.getElementById('login-pass').value.trim();
+
+            if (pendingRole === 'student') {
+                renderStudentDashboard();
+                switchView('student-view');
+            } 
+            else if (pendingRole === 'teacher') {
+                const teacherData = mockTeachers[idInput];
+                
+                if (teacherData && teacherData.pass === passInput) {
+                    renderTeacherDashboard(idInput, teacherData.subject);
+                    switchView('teacher-view');
+                } else {
+                    alert("Authorization Denied: Invalid Faculty ID or Passkey.");
+                }
+            } 
+            else if (pendingRole === 'admin') {
+                switchView('admin-view');
+            }
+        }
+    </script>
+</body>
+</html>
